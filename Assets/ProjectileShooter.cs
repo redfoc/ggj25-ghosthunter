@@ -86,6 +86,7 @@ public class ProjectileShooter : MonoBehaviour
     public void Upgrade(){
         if(level < 3){
             level++;
+            Debug.Log("P" + level);
         }
     }
     public void Downgrade(){
