@@ -1,66 +1,87 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;  // Jangan lupa untuk mengimpor NavMesh
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    public enum EnemyType
+    {
+        Basic,
+        Buff,
+        Speedy
+    }
+
+    public EnemyType enemyType;      // Tipe enemy (Basic, Buff, Speedy)
+    public int health;               // Jumlah health enemy
+    public int damage;               // Damage yang diberikan ke player
+    public float speed;              // Kecepatan enemy
+    public int dropMoney;            // Uang yang dijatuhkan saat mati
+    public float spawnRate;          // Spawn rate untuk tipe enemy
+
     private Transform player;        // Referensi ke posisi player
     private NavMeshAgent agent;      // NavMeshAgent dari enemy
-    public int damage;               // Damage yang diberikan ke player
 
-    // Start is called before the first frame update
     void Start()
     {
-        // Mendapatkan komponen NavMeshAgent dari enemy
+        // Mendapatkan komponen NavMeshAgent
         agent = GetComponent<NavMeshAgent>();
 
-        // Mencari objek bertag "Player" di scene
+        // Mencari referensi player
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         if (playerObject != null)
         {
-            player = playerObject.transform; // Menyimpan transform player
+            player = playerObject.transform;
         }
         else
         {
             Debug.LogError("No GameObject with tag 'Player' found in the scene!");
         }
+
+        // Set kecepatan agent berdasarkan atribut speed
+        agent.speed = speed;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (player != null)
         {
-            ChasePlayer();
+            agent.SetDestination(player.position); // Kejar player
         }
-    }
-
-    void ChasePlayer()
-    {
-        // Set tujuan (destination) dari agent ke posisi player
-        agent.SetDestination(player.position);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // Jika terkena collider milik player, berikan damage dan hancurkan enemy
         if (other.CompareTag("Player"))
         {
-            // Pastikan player memiliki komponen "Player" dengan fungsi TakeDamage
             Player playerScript = other.GetComponent<Player>();
             if (playerScript != null)
             {
                 playerScript.TakeDamage(damage);
             }
 
-            // Hancurkan enemy setelah menyerang
-            Destroy(gameObject);
+            Destroy(gameObject); // Hancurkan enemy setelah menyerang
         } else if (other.CompareTag("Bullet"))
         {
             GameGeneralLogic.instance.AddCoin(10);
             Destroy(other.gameObject);
             Destroy(gameObject);
         }
+        
+    }
+
+    public void TakeDamage(int amount)
+    {
+        health -= amount;
+
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        // Tambahkan drop money ke player
+        //GameObject.FindObjectOfType<GameManager>().AddMoney(dropMoney);
+        Destroy(gameObject);
     }
 }

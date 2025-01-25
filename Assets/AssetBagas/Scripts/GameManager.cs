@@ -49,12 +49,14 @@ public class GameManager : MonoBehaviour
             int spawnIndex = Random.Range(0, spawnPoints.Length);
             Transform spawnPoint = spawnPoints[spawnIndex];
 
-            // Pilih enemy secara acak
-            int enemyIndex = Random.Range(0, enemies.Length);
-            GameObject enemyToSpawn = enemies[enemyIndex];
+            // Pilih enemy berdasarkan spawn rate
+            GameObject enemyToSpawn = GetEnemyBySpawnRate();
 
-            // Spawn enemy di posisi yang dipilih
-            Instantiate(enemyToSpawn, spawnPoint.position, spawnPoint.rotation);
+            if (enemyToSpawn != null)
+            {
+                // Spawn enemy di posisi yang dipilih
+                Instantiate(enemyToSpawn, spawnPoint.position, spawnPoint.rotation);
+            }
 
             // Tunggu sebelum spawn berikutnya
             yield return new WaitForSeconds(spawnDelay);
@@ -65,6 +67,41 @@ public class GameManager : MonoBehaviour
     public void StopSpawning()
     {
         isSpawning = false;
-        StopCoroutine(SpawnEnemies());
+    }
+
+    // Pilih enemy berdasarkan spawn rate
+    private GameObject GetEnemyBySpawnRate()
+    {
+        float totalRate = 0f;
+
+        // Hitung total spawn rate
+        foreach (GameObject enemy in enemies)
+        {
+            Enemy enemyScript = enemy.GetComponent<Enemy>();
+            if (enemyScript != null)
+            {
+                totalRate += enemyScript.spawnRate;
+            }
+        }
+
+        float randomValue = Random.Range(0, totalRate); // Nilai acak dari 0 ke total spawn rate
+        float currentRate = 0f;
+
+        // Pilih enemy berdasarkan spawn rate
+        foreach (GameObject enemy in enemies)
+        {
+            Enemy enemyScript = enemy.GetComponent<Enemy>();
+            if (enemyScript != null)
+            {
+                currentRate += enemyScript.spawnRate;
+
+                if (randomValue <= currentRate)
+                {
+                    return enemy;
+                }
+            }
+        }
+
+        return null;
     }
 }
