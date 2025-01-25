@@ -5,11 +5,34 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public GameObject[] enemies;          // Variasi prefab enemy
+    public List<GameObject> enemiesList; 
     public Transform[] spawnPoints;       // Tiga posisi spawn (posisi berbeda)
     public float spawnDelay = 2f;         // Jeda antar spawn
 
     private bool isSpawning = false;      // Apakah sedang dalam proses spawning
 
+    [Header("Max Spawn Counter")]
+    public int basicEnemyMaxSpawnCount = 15;
+    public int buffGhostMaxSpawnCount = 5;
+    public int speedGhostMaxSpawnCount = 5;
+
+    [Header("Counter")]
+    public int basicEnemySpawnCount = 0;
+    public int buffGhostSpawnCount = 0;
+    public int speedGhostSpawnCount = 0;
+
+    [Header("Enemy Kill Count")]
+    public int basicEnemyKillCount = 0;
+    public int buffGhostKillCount = 0;
+    public int speedGhostKillCount = 0;
+
+    public int totalEnemyKill = 0;
+    public int remainingEnemyToKill = 0;
+
+    private void Start() {
+        if (enemiesList == null)
+            enemiesList = new List<GameObject>(enemies);
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -29,7 +52,30 @@ public class GameManager : MonoBehaviour
             StopSpawning();
         }
     }
+    private void Update() {
+        // debug f12 to print 
+        if (Input.GetKeyDown(KeyCode.F12)){
+            foreach(GameObject a in enemiesList){
+                Debug.Log(a.name);
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.I))
+            enemiesList.Remove(enemies[0]);
+        if (Input.GetKeyDown(KeyCode.O))
+            enemiesList.Remove(enemies[1]);
+        if (Input.GetKeyDown(KeyCode.P))
+            enemiesList.Remove(enemies[2]);
+    }
+    private void FixedUpdate() {
+        // count remaining enemy to kill and total current total kills
+        totalEnemyKill = basicEnemyKillCount + buffGhostKillCount + speedGhostKillCount;
+        remainingEnemyToKill = (basicEnemyMaxSpawnCount + buffGhostMaxSpawnCount + speedGhostMaxSpawnCount) - totalEnemyKill;
 
+
+        // LEVEL CLEARED if remaningEnemyToKill is 0
+        if (remainingEnemyToKill <= 0)
+            Debug.Log("you WINNN");
+    }
     // Fungsi untuk memulai spawning enemy
     public void StartSpawning()
     {
@@ -52,8 +98,35 @@ public class GameManager : MonoBehaviour
             // Pilih enemy berdasarkan spawn rate
             GameObject enemyToSpawn = GetEnemyBySpawnRate();
 
+            // 
+            if (basicEnemySpawnCount >= basicEnemyMaxSpawnCount){
+                enemiesList.Remove(enemies[0]);
+            } else if (buffGhostSpawnCount >= buffGhostMaxSpawnCount) {
+                // if (enemyToSpawn.GetComponent<Enemy>().enemyType == Enemy.EnemyType.Buff)
+                //     enemyToSpawn = enemies[2];
+                enemiesList.Remove(enemies[1]);
+            } else if (speedGhostSpawnCount >= speedGhostMaxSpawnCount) {
+                // if (enemyToSpawn.GetComponent<Enemy>().enemyType == Enemy.EnemyType.Speedy)
+                //     enemyToSpawn = enemies[0];
+                enemiesList.Remove(enemies[2]);
+            }
             if (enemyToSpawn != null)
-            {
+            {   
+                // check tipe enemy yg mo dispawn, habis itu tambahin ke counter
+                switch (enemyToSpawn.GetComponent<Enemy>().enemyType)
+                {
+                    case Enemy.EnemyType.Basic:
+                    basicEnemySpawnCount++;
+                    break;
+                    case Enemy.EnemyType.Buff:
+                    buffGhostSpawnCount++;
+                    break;
+                    case Enemy.EnemyType.Speedy:
+                    speedGhostSpawnCount++;
+                    break;
+                    default:
+                    break;
+                }
                 // Spawn enemy di posisi yang dipilih
                 Instantiate(enemyToSpawn, spawnPoint.position, spawnPoint.rotation);
             }
@@ -75,7 +148,7 @@ public class GameManager : MonoBehaviour
         float totalRate = 0f;
 
         // Hitung total spawn rate
-        foreach (GameObject enemy in enemies)
+        foreach (GameObject enemy in enemiesList)
         {
             Enemy enemyScript = enemy.GetComponent<Enemy>();
             if (enemyScript != null)
@@ -88,7 +161,7 @@ public class GameManager : MonoBehaviour
         float currentRate = 0f;
 
         // Pilih enemy berdasarkan spawn rate
-        foreach (GameObject enemy in enemies)
+        foreach (GameObject enemy in enemiesList)
         {
             Enemy enemyScript = enemy.GetComponent<Enemy>();
             if (enemyScript != null)
