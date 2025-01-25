@@ -11,6 +11,14 @@ public class CameraFollow : MonoBehaviour
     private Vector3 originalPosition;
     private float shakeIntensity = 0.2f;
     private float shakeDuration = 0.5f;
+
+    private void Awake()
+    {
+        if (vignetteMaterial != null)
+        {
+            vignetteMaterial.SetFloat("_VignetteIntensity", 0f);
+        }
+    }
     
     void OnRenderImage(RenderTexture source, RenderTexture destination)
     {

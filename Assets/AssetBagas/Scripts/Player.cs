@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public static Player instance;
     public float speed = 6f;           // Kecepatan karakter
     public float jumpForce = 5f;       // Kekuatan lompat
 
@@ -16,12 +17,26 @@ public class Player : MonoBehaviour
     public LayerMask groundMask;       // Layer tanah
 
     public int maxHealth;
+    public int curHealth;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
         // Mendapatkan komponen Rigidbody dari player
         rb = GetComponent<Rigidbody>();
+        curHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -58,11 +73,20 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        maxHealth -= damage;
-
-        if (maxHealth == 0)
+        curHealth -= damage;
+        if(curHealth < 0){
+            curHealth = 0;
+        }
+        UIScript.instance.UpdateHealthSliderValue(curHealth, maxHealth);
+        if (curHealth <= 0)
         {
             print("GameOver");
+        } else {
+            CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
+            if (cameraFollow != null)
+            {
+                cameraFollow.StartShake();
+            }
         }
     }
 }

@@ -59,7 +59,13 @@ public class Enemy : MonoBehaviour
             }
 
             Destroy(gameObject); // Hancurkan enemy setelah menyerang
+        } else if (other.CompareTag("Bullet"))
+        {
+            GameGeneralLogic.instance.AddCoin(10);
+            Destroy(other.gameObject);
+            Destroy(gameObject);
         }
+        
     }
 
     public void TakeDamage(int amount)
