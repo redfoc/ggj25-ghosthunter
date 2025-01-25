@@ -7,9 +7,9 @@ public class ProjectileShooter : MonoBehaviour
     public float shootCooldown = 0.5f;
     public Transform shootPointFront;
     public Transform shootPointBack;
-    public int level = 1;
+
     public float spreadAngle = 15f;
-    
+
     private float nextShootTime;
 
     void Update()
@@ -23,7 +23,7 @@ public class ProjectileShooter : MonoBehaviour
 
     void ShootByLevel()
     {
-        switch (level)
+        switch (GameGeneralLogic.instance.shooterLevel)
         {
             case 1:
                 ShootSingle();
@@ -58,40 +58,35 @@ public class ProjectileShooter : MonoBehaviour
     void SpawnProjectile(Quaternion rotation, bool isFront = true)
     {
         Vector3 shootPosition = shootPointFront != null ? shootPointFront.position : transform.position;
-        if(!isFront){
+        if (!isFront)
+        {
             shootPosition = shootPointBack != null ? shootPointBack.position : transform.position;
         }
-        GameObject projectile = Instantiate(projectilePrefab, shootPosition, rotation);
-        
+
+        // Only keep Y rotation
+        Quaternion yRotation = Quaternion.Euler(0, rotation.eulerAngles.y, 0);
+
+        GameObject projectile = Instantiate(projectilePrefab, shootPosition, yRotation);
+
         // Set initial scale
-        projectile.transform.localScale = Vector3.one * 0.2f;
-        
+        projectile.transform.localScale = Vector3.one * 0.3f;
+
         // Scale up animation
-        LeanTween.scale(projectile, Vector3.one * 0.6f, 2f).setEase(LeanTweenType.easeOutQuad);
-        
+        LeanTween.scale(projectile, Vector3.one * 0.8f, 0.8f).setEase(LeanTweenType.easeOutQuad);
+
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
         Collider collider = projectile.GetComponent<Collider>();
-        
+
         if (rb != null && collider != null)
         {
             collider.enabled = false;
             rb.velocity = projectile.transform.forward * projectileSpeed;
-            LeanTween.delayedCall(0.2f, () => {
+            LeanTween.delayedCall(0.2f, () =>
+            {
                 collider.enabled = true;
             });
-            
+
             Destroy(projectile, 3f);
         }
     }
-    public void Upgrade(){
-        if(level < 3){
-            level++;
-            Debug.Log("P" + level);
-        }
-    }
-    public void Downgrade(){
-        if(level > 1){
-            level--;
-        }
-    }
-} 
+}
