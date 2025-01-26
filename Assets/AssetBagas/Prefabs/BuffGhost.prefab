@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1517599713135758898}
   m_Layer: 0
   m_Name: BuffGhost
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,8 +98,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 0.72
+  m_Height: 3.29
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!195 &1517599713135758899

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
     public GameObject[] enemies;          // Variasi prefab enemy
     public List<GameObject> enemiesList; 
     public Transform[] spawnPoints;       // Tiga posisi spawn (posisi berbeda)
@@ -12,9 +13,9 @@ public class GameManager : MonoBehaviour
     private bool isSpawning = false;      // Apakah sedang dalam proses spawning
 
     [Header("Max Spawn Counter")]
-    public int basicEnemyMaxSpawnCount = 15;
-    public int buffGhostMaxSpawnCount = 5;
-    public int speedGhostMaxSpawnCount = 5;
+    public int basicEnemyMaxSpawnCount = 5;
+    public int buffGhostMaxSpawnCount = 3;
+    public int speedGhostMaxSpawnCount = 2;
 
     [Header("Counter")]
     public int basicEnemySpawnCount = 0;
@@ -29,29 +30,46 @@ public class GameManager : MonoBehaviour
     public int totalEnemyKill = 0;
     public int remainingEnemyToKill = 0;
 
+    public bool isGameComplete = false;
+    public bool isGameover = false;
+
+    public int enemyInScene = 0;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void Start() {
         if (enemiesList == null)
             enemiesList = new List<GameObject>(enemies);
     }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            print("Masuk");
-            // Mulai spawning saat player masuk ke trigger
-            StartSpawning();
-        }
-    }
+    // private void OnTriggerEnter(Collider other)
+    // {
+    //     if (other.CompareTag("Player"))
+    //     {
+    //         print("Masuk");
+    //         // Mulai spawning saat player masuk ke trigger
+    //         StartSpawning();
+    //     }
+    // }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            print("Keluar");
-            // Hentikan spawning saat player keluar dari trigger
-            StopSpawning();
-        }
-    }
+    // private void OnTriggerExit(Collider other)
+    // {
+    //     if (other.CompareTag("Player"))
+    //     {
+    //         print("Keluar");
+    //         // Hentikan spawning saat player keluar dari trigger
+    //         StopSpawning();
+    //     }
+    // }
     private void Update() {
         // debug f12 to print 
         if (Input.GetKeyDown(KeyCode.F12)){
@@ -73,8 +91,17 @@ public class GameManager : MonoBehaviour
 
 
         // LEVEL CLEARED if remaningEnemyToKill is 0
-        if (remainingEnemyToKill <= 0)
-            Debug.Log("you WINNN");
+        if(!isGameComplete){
+            if (enemyInScene <= 0){
+                if(basicEnemyKillCount >= basicEnemyMaxSpawnCount && buffGhostKillCount >= buffGhostMaxSpawnCount && speedGhostKillCount >= speedGhostMaxSpawnCount){
+                    isGameComplete = true;
+                    Debug.Log("Game Completed");
+                    UIScript.instance.ShowPopupGameCompleted();
+                }
+            }
+        }
+
+        UIScript.instance.UpdateTextCounterGhost(basicEnemyKillCount+"/"+basicEnemyMaxSpawnCount, buffGhostKillCount+"/"+buffGhostMaxSpawnCount, speedGhostKillCount+"/"+speedGhostMaxSpawnCount);
     }
     // Fungsi untuk memulai spawning enemy
     public void StartSpawning()
@@ -176,5 +203,9 @@ public class GameManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void EnemyKilled(string type = ""){
+        enemyInScene--;
     }
 }

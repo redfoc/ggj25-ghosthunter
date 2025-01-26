@@ -38,7 +38,7 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            Debug.LogError("No GameObject with tag 'Player' found in the scene!");
+            Debug.Log("No GameObject with tag 'Player' found in the scene!");
         }
 
         // Set kecepatan agent berdasarkan atribut speed
@@ -62,10 +62,12 @@ public class Enemy : MonoBehaviour
             {
                 playerScript.TakeDamage(damage);
             }
+            GameManager.instance.EnemyKilled();
 
             Destroy(gameObject); // Hancurkan enemy setelah menyerang
         } else if (other.CompareTag("Bullet"))
         {
+            GameManager.instance.EnemyKilled();
             CountAsKill();
 
             GameGeneralLogic.instance.AddCoin(10);
