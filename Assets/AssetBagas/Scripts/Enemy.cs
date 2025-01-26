@@ -55,6 +55,7 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if(GameManager.instance.isGameComplete || GameManager.instance.isGameover) return;
         if (other.CompareTag("Player"))
         {
             Player playerScript = other.GetComponent<Player>();

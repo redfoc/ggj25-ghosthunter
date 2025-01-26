@@ -64,6 +64,11 @@ public class UIScript : MonoBehaviour
     }
 
     public void ShowPopupGameover(){
+        GameObject[] collection = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (var item in collection)
+        {
+            item.GetComponent<Enemy>().speed = 0;
+        }
         GameManager.instance.isGameover = true;
         popupGameover.SetActive(true);
     }
