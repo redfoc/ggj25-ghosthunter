@@ -7,7 +7,9 @@ using System.Collections;
 public class MainMenuScript : MonoBehaviour
 {
     public GameObject panelAbout;
+    public GameObject panelTutorial;
     public GameObject btnPlay;
+    public GameObject btnTutorial;
     public GameObject btnCredit;
     public GameObject btnExit;
     public GameObject gameTitle;
@@ -23,6 +25,7 @@ public class MainMenuScript : MonoBehaviour
     {
         fadePanel.enabled = true;
         panelAbout.SetActive(false);
+        panelTutorial.SetActive(false);
         originalScale = btnPlay.transform.localScale;
         SetupButtonHoverEffects();
         AnimateGameTitle();
@@ -33,6 +36,7 @@ public class MainMenuScript : MonoBehaviour
     {
         SetupHoverEffect(btnPlay);
         SetupHoverEffect(btnCredit);
+        SetupHoverEffect(btnTutorial);
         SetupHoverEffect(btnExit);
     }
 
@@ -107,4 +111,15 @@ public class MainMenuScript : MonoBehaviour
 
     public void OpenPanelAbout() => panelAbout.SetActive(true);
     public void ClosePanelAbout() => panelAbout.SetActive(false);
+
+    public void OpenPanelTutorial() => panelTutorial.SetActive(true);
+    public void ClosePanelTutorial() => panelTutorial.SetActive(false);
+
+    public void QuitGame()
+    {
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+        Application.Quit();
+    }
 }
