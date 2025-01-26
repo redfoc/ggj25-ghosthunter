@@ -4,7 +4,7 @@ public class GameGeneralLogic : MonoBehaviour
 {
     public static GameGeneralLogic instance;
     public int coin = 0;
-    private int[] upgradeCost = { 30, 60, 12000 };
+    private int[] upgradeCost = { 60, 120, 12000 };
     public ProjectileShooter projectileShooter;
     public int shooterLevel = 1;
     private GameObject playerArrow;
