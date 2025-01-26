@@ -7,11 +7,13 @@ public class CursorMovement : MonoBehaviour
     public float fixedHeight = 0f;
     private Camera mainCamera;
     private Plane groundPlane;
+    private Animator anim;
 
     void Start()
     {
         mainCamera = Camera.main;
         groundPlane = new Plane(Vector3.up, fixedHeight);
+        anim = GetComponentInChildren<Animator>();
     }
 
     void Update()
@@ -29,6 +31,7 @@ public class CursorMovement : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotationSpeed * Time.deltaTime);
 
             // Move towards target
+            anim.SetTrigger("Walking");
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
         }
     }
