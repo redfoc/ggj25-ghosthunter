@@ -67,7 +67,7 @@ public class ProjectileShooter : MonoBehaviour
         Quaternion yRotation = Quaternion.Euler(0, rotation.eulerAngles.y, 0);
 
         GameObject projectile = Instantiate(projectilePrefab, shootPosition, yRotation);
-
+        AudioManager.instance.PlaySFX(2);
         // Set initial scale
         projectile.transform.localScale = Vector3.one * 0.3f;
 

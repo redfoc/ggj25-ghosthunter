@@ -93,6 +93,7 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
+        AudioManager.instance.PlaySFX(4);
         health -= amount;
 
         if (health <= 0)

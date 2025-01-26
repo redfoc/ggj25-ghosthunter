@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
 
     public int maxHealth;
     public int curHealth;
+    private Animator anim;
 
     private void Awake()
     {
@@ -37,6 +38,7 @@ public class Player : MonoBehaviour
         // Mendapatkan komponen Rigidbody dari player
         rb = GetComponent<Rigidbody>();
         curHealth = maxHealth;
+        anim = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -73,6 +75,8 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        anim.SetTrigger("Hit");
+        AudioManager.instance.PlaySFX(0);
         curHealth -= damage;
         if(curHealth < 0){
             curHealth = 0;
@@ -80,6 +84,8 @@ public class Player : MonoBehaviour
         UIScript.instance.UpdateHealthSliderValue(curHealth, maxHealth);
         if (curHealth <= 0)
         {
+            anim.SetTrigger("Dead");
+            AudioManager.instance.PlaySFX(1);
             print("GameOver");
         } else {
             CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
