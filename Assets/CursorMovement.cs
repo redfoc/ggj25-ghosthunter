@@ -32,6 +32,7 @@ public class CursorMovement : MonoBehaviour
 
             // Move towards target
             anim.SetTrigger("Walking");
+            
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
         }
     }

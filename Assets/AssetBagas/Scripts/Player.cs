@@ -76,6 +76,7 @@ public class Player : MonoBehaviour
     public void TakeDamage(int damage)
     {
         anim.SetTrigger("Hit");
+        AudioManager.instance.PlaySFX(0);
         curHealth -= damage;
         if(curHealth < 0){
             curHealth = 0;
@@ -84,6 +85,7 @@ public class Player : MonoBehaviour
         if (curHealth <= 0)
         {
             anim.SetTrigger("Dead");
+            AudioManager.instance.PlaySFX(1);
             print("GameOver");
         } else {
             CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
