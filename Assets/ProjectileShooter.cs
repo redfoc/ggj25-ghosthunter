@@ -14,6 +14,7 @@ public class ProjectileShooter : MonoBehaviour
 
     void Update()
     {
+        if(GameManager.instance.isGameComplete) return;
         if (Input.GetMouseButtonDown(0) && Time.time >= nextShootTime)
         {
             ShootByLevel();
@@ -21,7 +22,7 @@ public class ProjectileShooter : MonoBehaviour
         }
     }
 
-    void ShootByLevel()
+    public void ShootByLevel()
     {
         switch (GameGeneralLogic.instance.shooterLevel)
         {
@@ -79,14 +80,14 @@ public class ProjectileShooter : MonoBehaviour
 
         if (rb != null && collider != null)
         {
-            collider.enabled = false;
+            //collider.enabled = false;
             rb.velocity = projectile.transform.forward * projectileSpeed;
             LeanTween.delayedCall(0.2f, () =>
             {
-                collider.enabled = true;
+                //collider.enabled = true;
             });
 
-            Destroy(projectile, 3f);
+            Destroy(projectile, 2f);
         }
     }
 }

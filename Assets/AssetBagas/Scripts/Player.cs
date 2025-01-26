@@ -80,6 +80,8 @@ public class Player : MonoBehaviour
         UIScript.instance.UpdateHealthSliderValue(curHealth, maxHealth);
         if (curHealth <= 0)
         {
+            gameObject.SetActive(false);
+            UIScript.instance.ShowPopupGameover();
             print("GameOver");
         } else {
             CameraFollow cameraFollow = Camera.main.GetComponent<CameraFollow>();
