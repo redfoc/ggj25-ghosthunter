@@ -166,6 +166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5b2477543b784a4aaeabfd1eacb74b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
+  gameManagerTag: GameController
   enemyType: 2
   health: 1
   damage: 2

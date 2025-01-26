@@ -9,7 +9,8 @@ public class Enemy : MonoBehaviour
         Buff,
         Speedy
     }
-
+    public GameManager gameManager;  // reference ke gameManager
+    public string gameManagerTag;    // Tag si game manager -- biasanya "GameController"
     public EnemyType enemyType;      // Tipe enemy (Basic, Buff, Speedy)
     public int health;               // Jumlah health enemy
     public int damage;               // Damage yang diberikan ke player
@@ -22,6 +23,10 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
+        if (gameManager == null){
+            gameManager = GameObject.FindGameObjectWithTag(gameManagerTag).GetComponent<GameManager>();
+        }
+
         // Mendapatkan komponen NavMeshAgent
         agent = GetComponent<NavMeshAgent>();
 
@@ -61,11 +66,29 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject); // Hancurkan enemy setelah menyerang
         } else if (other.CompareTag("Bullet"))
         {
+            CountAsKill();
+
             GameGeneralLogic.instance.AddCoin(10);
             Destroy(other.gameObject);
             Destroy(gameObject);
         }
         
+    }
+
+    void CountAsKill(){
+        // tambahin kill count ke gamemanager selama masih ada slotnya
+
+        if (enemyType == EnemyType.Basic){
+            if (gameManager.basicEnemyKillCount < gameManager.basicEnemyMaxSpawnCount){
+                gameManager.basicEnemyKillCount++;
+            }
+        } else if (enemyType == EnemyType.Buff){
+            if (gameManager.buffGhostKillCount < gameManager.buffGhostMaxSpawnCount)
+                gameManager.buffGhostKillCount++;
+        } else if (enemyType == EnemyType.Speedy){
+            if (gameManager.speedGhostKillCount < gameManager.speedGhostMaxSpawnCount)
+                gameManager.speedGhostKillCount++;
+        }
     }
 
     public void TakeDamage(int amount)
@@ -82,6 +105,8 @@ public class Enemy : MonoBehaviour
     {
         // Tambahkan drop money ke player
         //GameObject.FindObjectOfType<GameManager>().AddMoney(dropMoney);
+
+        
         Destroy(gameObject);
     }
 }
