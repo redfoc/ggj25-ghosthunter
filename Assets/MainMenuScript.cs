@@ -102,7 +102,7 @@ public class MainMenuScript : MonoBehaviour
             yield return null;
         }
         
-        SceneManager.LoadScene("SampleScene - Copy");
+        SceneManager.LoadScene("Gagas - Level 1");
     }
 
     public void OpenPanelAbout() => panelAbout.SetActive(true);
