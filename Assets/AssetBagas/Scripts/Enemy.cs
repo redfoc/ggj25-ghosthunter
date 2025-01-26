@@ -47,7 +47,7 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        if (player != null)
+        if (player != null && player.GetComponent<Player>().curHealth > 0)
         {
             agent.SetDestination(player.position); // Kejar player
         }

@@ -23,7 +23,9 @@ public class CursorMovement : MonoBehaviour
     void Update()
     {
         if(GameManager.instance.isGameComplete) return;
-        
+
+        if(GameManager.instance.isGameover) return;
+
         if (Input.GetMouseButtonDown(1) && !isRotating)
         {
             isRotating = true;
@@ -57,14 +59,19 @@ public class CursorMovement : MonoBehaviour
         if (groundPlane.Raycast(ray, out enter))
         {
             Vector3 targetPosition = ray.GetPoint(enter);
-            
-            // Rotate towards target
-            Vector3 direction = (targetPosition - transform.position).normalized;
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotationSpeed * Time.deltaTime);
+            Vector3 direction = (targetPosition - transform.position);
+            float distance = direction.magnitude;
 
-            // Move towards target
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+            if (distance > minDistance)
+            {
+                direction.Normalize();
+                direction.y = 0f;
+
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, rotationSpeed * Time.deltaTime);
+                anim.SetTrigger("Walking");
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+            }
         }
     }
 }
